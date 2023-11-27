@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  description: This API provides audit info
+  version: "1.0.0"
+  title: Audit API
+  contact:
+    email: rchan200@my.bcit.ca
+tags:
+  - name: bookings
+    description: Operations available for bookings
+paths:
+  /book:
+    get:
+      summary: gets a booking from history
+      operationId: app.get_booking_event
+      description: Gets bookings from the event store
+      parameters:
+        - name: index
+          in: query
+          description: Gets the booking at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a booking event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        
+  /cancel:
+    get:
+      summary: Gets a cancellation from history
+      operationId: app.get_cancel_event
+      description: Gets cancellation from the event store
+      parameters:
+        - name: index
+          in: query
+          description: Gets the cancellation at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a cancellation event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/EventCancel'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    
+  /health:
+    get:
+      description: Returns health status
+      operationId: app.health
+      responses:
+        '200':
+          description: Successfully returned health status
+        
+components:
+  schemas:
+    Event:
+      required:
+        - event_id
+        - name
+        - venue
+        - date
+        - duration
+        - attendees
+      properties:
+        event_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Bob's Birthday
+        venue:
+          type: string
+          example: Paul's Pizza
+        date:
+          type: string
+          format: date-time
+          example: '2023-09-28T13:30:00'
+        duration:
+          type: integer
+          example: 180
+        attendees:
+          type: integer
+          example: 10
+      type: object
+    
+    EventCancel:
+      required:
+        - cancel_id
+        - name
+        - venue
+        - date
+        - reason
+        - refund_price
+        - attendees
+      properties:
+        cancel_id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: Cat Owner Meet-up
+        venue:
+          type: string
+          example: Leaf Park
+        date:
+          type: string
+          format: date-time
+          example: '2023-010-10T13:30:00'
+        reason:
+          type: string
+          example: thunderstorm
+        refund_price:
+          type: number
+          example: 5.00
+        attendees:
+          type: integer
+          example: 20
+      type: object
